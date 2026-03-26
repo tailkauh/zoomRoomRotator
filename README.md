@@ -15,7 +15,7 @@ start(1, 15, [3, 6, 9])
 
 // Asetusten muokkaaminen
 roomInterval = 50     // Vaihdetaan huonetta 50 sekunnin välein
-excludeRooms.push(10) // Lisätään Room 10 väliin jätettävien listalle
+excludeRooms.push(10) // Lisätään Room 10 väliin jätettävien listalle (muutos tulee voimaan vasta seuraavalla kierroksella)
 ```
 - Käynnistetyn kiertelyn voi pysäyttää väliaikaisesti näppäinyhdistelmällä `Alt + k`.
 Saman näppäinyhdistelmän painaminen uudestaan jatkaa kiertelyä pysäytetystä kohdasta.
