@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ZoomRoomRotator
 // @namespace    http://tampermonkey.net/
-// @version      2026-03-25
+// @version      2026-04-29
 // @description  Rotate breakoutrooms in Zoom webclient
 // @author       tailkauh
 // @match        https://app.zoom.us/*ref_from=launch&fromPWA=1*
@@ -25,8 +25,14 @@ W.joinRoom = joinRoom;
 
 // pausen käyttäminen painamalla Alt+k
 document.getElementById("webclient").contentWindow.addEventListener("keyup", (keyEv)=> {
-    if (keyEv.altKey && keyEv.key === "k") {
+    if (keyEv.altKey && keyEv.key === " ") {
         W.pause = !W.pause;
+    }
+})
+
+document.getElementById("webclient").contentWindow.addEventListener("keyup", (keyEv)=> {
+    if (keyEv.altKey && keyEv.key === "ArrowRight") {
+        W.counter = W.roomInterval;
     }
 })
 
@@ -39,7 +45,7 @@ document.getElementById("webclient").contentWindow.addEventListener("keyup", (ke
  */
 function start(firstRoom, lastRoom, exclude = []) {
     // Alustetaan kiertämiseen liittyvät tiedot
-    let counter = 0;
+    W.counter = 0;
     let roomSequence = generateSequence(firstRoom, lastRoom, exclude);
     let currentRoom = roomSequence.shift();
     W.firstRoom = firstRoom;
@@ -49,21 +55,21 @@ function start(firstRoom, lastRoom, exclude = []) {
 
     // sekunnin välein suoritettava funktio, joka tutkii onko aika vaihtaa huonetta
     const countdown = () => {
-        if (W.pause) {
-            W.console.log("timer: paused at " + (W.roomInterval-counter) + " s");
+        if (W.pause && !(W.roomInterval-W.counter <= 0)) {
+            W.console.log("timer: paused at " + (W.roomInterval-W.counter) + " s left in room " + currentRoom);
             return;
         }
 
-        counter++;
-        console.log("timer: " + (W.roomInterval - counter) + "s");
-        if (counter >= W.roomInterval) {
+        W.counter++;
+        console.log("timer: " + (W.roomInterval - W.counter) + " s left in room " + currentRoom);
+        if (W.counter >= W.roomInterval) {
 
             if (roomSequence.length === 0) {
                 roomSequence = generateSequence(firstRoom, lastRoom, W.excludeRooms);
             }
             currentRoom = roomSequence.shift();
             joinRoom(currentRoom);
-            counter = 0;
+            W.counter = 0;
         }
     }
 
